@@ -1,8 +1,5 @@
-'use client'
-import React, { useEffect } from 'react'
-import { useSelector, useDispatch } from 'react-redux';
-import { usePathname } from 'next/navigation';
-import { fetchCourses } from '@/store/slices/singleCollegeSlice';
+
+import React from 'react'
 
 const CourseDetails = ({ courses }) => {
     const allCourse = courses?.data?.courses
