@@ -15,7 +15,9 @@ const SingleUserPage = () => {
     const { singleUser, status1, error1 } = useSelector(state => state.User);
 
     useEffect(() => {
-        dispatch(fetchSingleUser(userId))
+        if (status !== 'succeeded') {
+            dispatch(fetchSingleUser(userId))
+        }
     }, [dispatch, userId])
 
     if (status1 === 'loading') {
@@ -34,7 +36,7 @@ const SingleUserPage = () => {
                 <div className='w-full h-48 relative overflow-hidden rounded-lg mb-5'>
                     <Image src={profilePic || '/avatar.png'} alt='' fill />
                 </div>
-                {firstName  + ' ' + lastName}<br/>
+                {firstName + ' ' + lastName}<br />
             </div>
 
             {/* User details */}
@@ -71,7 +73,7 @@ const SingleUserPage = () => {
                         <div className='mt-20 mb-6'>
                             <div className='flex gap-3'>
                                 isDeleted :
-                                <span className='text-[#b7bac1]'>{isDeleted ? 'True':'False'}</span>
+                                <span className='text-[#b7bac1]'>{isDeleted ? 'True' : 'False'}</span>
                             </div>
                             <div className='flex gap-3'>
                                 Created At :

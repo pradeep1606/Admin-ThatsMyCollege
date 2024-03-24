@@ -1,38 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchSearchCollege } from '@/store/slices/searchCollege';
-// import { nanoid } from '@reduxjs/toolkit';
 import axiosInstance from '@/config/AxiosIntercepter';
 import { toast } from 'react-toastify';
+import { fetchCourse } from '@/store/slices/courseSlice';
 
-const CourseField = () => {
+const EditCourseField = ({ clgId, clgName }) => {
     const Api = process.env.SERVICE_BASE_URL;
     const dispatch = useDispatch();
-    // const uniqueid = nanoid();
-    const { colleges, loading, error } = useSelector((state) => state.searchCollege);
-    const [searchTerm, setSearchTerm] = useState('');
-    const [collegeId, setCollegeId] = useState('');
-    const [selectedCollege, setSelectedCollege] = useState(''); // State to store selected college
-    const [showDropdown, setShowDropdown] = useState(false); // State to manage dropdown visibility
+    const { courses, status, error } = useSelector((state) => state.Course);
     const [courseFields, setCourseFields] = useState([{ id: 1, label: "Course 1" }]); // Initial CourseField
-
-    const handleInputChange = (event) => {
-        setSearchTerm(event.target.value);
-        setShowDropdown(true);
-    };
-
-    const handleSelectCollege = (collegeName, collegeId) => {
-        setSelectedCollege(collegeId);
-        setCollegeId(collegeId);
-        setSearchTerm(collegeName);
-        setShowDropdown(false);
-    };
+    console.log(courses)
 
     useEffect(() => {
-        if (searchTerm.length >= 3) {
-            dispatch(fetchSearchCollege(`/college?collegeName=${searchTerm}`));
-        }
-    }, [dispatch, searchTerm]);
+        dispatch(fetchCourse(`/courses/college/${clgId}`));
+    }, [dispatch, clgId]);
 
     const handleAddMore = () => {
         const lastCourseId = courseFields[courseFields?.length - 1]?.id || 0;
@@ -50,7 +31,7 @@ const CourseField = () => {
     const handleSubmit = async (event) => {
         event.preventDefault();
         const payload = {
-            collegeId: collegeId,
+            collegeId: clgId,
             courses: courseFields.map(field => ({
                 courseName: event.target.elements[`courseName-${field.id}`]?.value,
                 fullName: event.target.elements[`fullName-${field.id}`]?.value,
@@ -68,11 +49,11 @@ const CourseField = () => {
             });
             // console.log(response);
             toast.success(response.data.message)
-            setSearchTerm('');
             setCourseFields([]);
         } catch (error) {
             // console.error('Error submitting course:', error);
-            toast.error(error.response.data.message)
+            toast.success(error)
+            toast.error(error.response?.data.message)
         }
     };
     return (
@@ -87,32 +68,9 @@ const CourseField = () => {
                             id="collegeType"
                             name="collegeType"
                             placeholder="Search for a college"
-                            value={searchTerm}
-                            onChange={handleInputChange}
+                            value={clgName}
                             required
                         />
-                        {/* Render search results as dropdown */}
-                        {showDropdown && (
-                            <div className="absolute top-full bg-[#182237] px-2 border rounded w-full shadow-md">
-                                {loading ? (
-                                    <div>Loading...</div>
-                                ) : error ? (
-                                    <div>Error: {error.message}</div>
-                                ) : colleges?.data?.colleges.length === 0 ? (
-                                    <div>No colleges found</div>
-                                ) : (
-                                    <ul className='divide-y py-2 px-2 space-y-2'>
-                                        {colleges?.data?.colleges.map((college) => (
-                                            <li key={college._id} onClick={() => handleSelectCollege(college.name, college._id)} className='cursor-pointer'>
-                                                <p>
-                                                    {college.name}
-                                                </p>
-                                            </li>
-                                        ))}
-                                    </ul>
-                                )}
-                            </div>
-                        )}
                     </div>
                 </div>
 
@@ -208,4 +166,4 @@ const CourseField = () => {
     )
 }
 
-export default CourseField
+export default EditCourseField

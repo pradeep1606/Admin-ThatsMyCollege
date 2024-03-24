@@ -5,7 +5,6 @@ import axiosInstance from '@/config/AxiosIntercepter';
 const GetAdmin = ({ id }) => {
     const Api = process.env.SERVICE_BASE_URL;
     const [adminName, setAdminName] = useState(null);
-
     useEffect(() => {
         const fetchAdmin = async () => {
             try {
@@ -16,7 +15,7 @@ const GetAdmin = ({ id }) => {
                 });
                 setAdminName(response.data.data.firstName + ' ' + response.data?.data?.lastName);
             } catch (error) {
-                console.error('Error fetching admin:', error);
+                // console.error('Error fetching admin:', error);
             }
         };
         fetchAdmin();

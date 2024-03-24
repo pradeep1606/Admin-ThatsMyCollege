@@ -22,6 +22,26 @@ const FormComp = ({ initialForm, method, path }) => {
         }
     };
 
+    // Function to reset form fields
+    const resetFormFields = () => {
+        setFormData({
+            name: '',
+            address: '',
+            contact: '',
+            city: '',
+            state: '',
+            collegeType: '',
+            established: '',
+            university: '',
+            logo: '',
+            image: '',
+            message: '',
+            details: '',
+            rating: '',
+            featured: 'false', // Set default value for select field
+        });
+    };
+
     // Function to handle form submission
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -32,8 +52,8 @@ const FormComp = ({ initialForm, method, path }) => {
                     'Content-Type': 'application/json',
                 },
             });
-            setFormData(initialForm);
-            setLoading(false)
+            resetFormFields();
+            setLoading(false);
             toast.success(response.data.message);
         } catch (error) {
             setLoading(false)

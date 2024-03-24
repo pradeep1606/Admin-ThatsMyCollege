@@ -9,19 +9,18 @@ import { CiBookmarkCheck } from "react-icons/ci";
 import Link from 'next/link';
 import { useSelector, useDispatch } from 'react-redux';
 import { usePathname } from 'next/navigation';
-import { fetchSingleColleges, fetchCourses } from '@/store/slices/singleCollegeSlice';
+import { fetchSingleColleges } from '@/store/slices/singleCollegeSlice';
 import GetAdmin from '@/app/components/getAdmin/page';
 import CourseDetails from '@/app/components/courseDetails/page';
 
 const SingleCollegePage = () => {
     const pathname = usePathname()
     const clgId = pathname.split('/').pop();
-    const { college, courses, status, error } = useSelector((state) => state.SingleCollege);
+    const { college, status, error } = useSelector((state) => state.SingleCollege);
     const dispatch = useDispatch();
 
     useEffect(() => {
         dispatch(fetchSingleColleges(clgId))
-        dispatch(fetchCourses(clgId))
     }, [clgId, dispatch]);
 
     if (status === 'loading') {
@@ -30,8 +29,9 @@ const SingleCollegePage = () => {
     if (status === 'failed') {
         return <div>Api Error: {error}</div>;
     }
-    const { _id, name, address, city, collegeType, contact, createdAt, createdBy, details, message, established, featured = false, image, isDeleted, logo, rating, state, university, updatedAt, updatedBy } = college.data || {};
-
+    const { _id, name, address, city, collegeType, contact, createdAt, createdBy, details, message, established, featured = false, image, isDeleted, logo, rating, state, university, updatedAt, updatedBy } = college?.data?.college || {};
+    const courses = college?.data?.courses
+    console.log(courses?.courses.length)
     return (
         <div className='flex mt-4 pt-4 bg-[#182237] rounded-md'>
             {/* logo & name */}
@@ -71,9 +71,9 @@ const SingleCollegePage = () => {
                                 <span className='text-[#b7bac1] text-sm'>{state}</span>
                             </div>
                             <div className='flex gap-3 col-span-2'>
-                                <MdSchool className='text-xl' />
+                                <MdSchool className='text-xl flex-1 -ml-1' />
                                 CollegeType:
-                                <span className='text-[#b7bac1] text-sm'>{collegeType?.join(', ')}</span>
+                                <span className='text-[#b7bac1] text-sm flex-[18]'>{collegeType?.join(', ')}</span>
                             </div>
                             <div className='flex gap-3'>
                                 <MdCalendarMonth className='text-xl' />
@@ -94,14 +94,14 @@ const SingleCollegePage = () => {
                                     ))}</span>
                             </div>
                             <div className='flex gap-3 col-span-2'>
-                                <MdMessage className='text-xl flex-1 -ml-2' />
+                                <MdMessage className='text-xl flex-1 -ml-1' />
                                 Message:
-                                <span className='text-[#b7bac1] text-sm flex-[12]'>{message}</span>
+                                <span className='text-[#b7bac1] text-sm flex-[16]'>{message}</span>
                             </div>
                             <div className='flex gap-3 col-span-2'>
-                                <TbListDetails className='text-xl flex-1 -ml-2' />
+                                <TbListDetails className='text-xl flex-1 -ml-1' />
                                 Details:
-                                <span className='text-[#b7bac1] text-sm flex-[12]'>{details}</span>
+                                <span className='text-[#b7bac1] text-sm flex-[18]'>{details}</span>
                             </div>
                             <div className='flex gap-3'>
                                 <FaStar className='text-xl' />
@@ -155,9 +155,14 @@ const SingleCollegePage = () => {
                         <Link href={`/dashboard/colleges/edit-college/${_id}`}>
                             <button className='px-3 py-1 border-none rounded-md cursor-pointer bg-teal-600'>Edit College</button>
                         </Link>
-                        <Link href='/dashboard/colleges/edit-courses'>
-                            <button className='px-3 py-1 border-none rounded-md cursor-pointer bg-teal-600'>Edit Courses</button>
-                        </Link>
+                        {courses?.courses?.length ?
+                            <Link href={`/dashboard/colleges/edit-courses/${_id}-${name}`}>
+                                <button className='px-3 py-1 border-none rounded-md cursor-pointer bg-teal-600'>Edit Courses</button>
+                            </Link> :
+                            <Link href='/dashboard/colleges/addCourse'>
+                                <button className='px-3 py-1 border-none rounded-md cursor-pointer bg-teal-600'>Add Courses</button>
+                            </Link>
+                        }
                     </div>
                 </div>
             </div>

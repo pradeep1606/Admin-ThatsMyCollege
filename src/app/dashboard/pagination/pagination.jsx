@@ -1,16 +1,21 @@
 import React from 'react';
 import { MdArrowRight, MdOutlineArrowRight } from 'react-icons/md';
+import { useDispatch } from 'react-redux';
 
-const Pagination = ({ page, setPage, totalDocuments }) => {
+
+const Pagination = ({ page, setPage, totalDocuments, setStatus }) => {
+  const dispatch = useDispatch();
   const totalPages = Math.ceil(totalDocuments / 20);
 
   const handleNextPage = () => {
     setPage(page + 1);
+    dispatch(setStatus('loading'));
   };
 
   const handlePreviousPage = () => {
     if (page > 1) {
       setPage(page - 1);
+      dispatch(setStatus('loading'));
     }
   };
 

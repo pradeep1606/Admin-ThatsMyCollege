@@ -12,8 +12,10 @@ const User = () => {
   const { users, status, error } = useSelector((state) => state.User)
 
   useEffect(() => {
-    dispatch(fetchAllusers())
-  }, [dispatch])
+    if (status !== 'succeeded') {
+      dispatch(fetchAllusers())
+    }
+  }, [dispatch, status])
 
   if (status === 'loading') {
     return <div>Loading...</div>;

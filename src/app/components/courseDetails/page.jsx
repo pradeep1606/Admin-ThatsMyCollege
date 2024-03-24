@@ -2,7 +2,7 @@
 import React from 'react'
 
 const CourseDetails = ({ courses }) => {
-    const allCourse = courses?.data?.courses
+    const allCourse = courses?.courses
     // console.log(typeof allCourse, allCourse)
     return (
         <div className='pt-6'>

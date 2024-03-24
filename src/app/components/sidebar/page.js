@@ -14,6 +14,11 @@ const menuItems = [
     icon: <MdDashboard />,
   },
   {
+    title: 'Student Admission',
+    path: '/dashboard/admission',
+    icon: <HiUsers />,
+  },
+  {
     title: 'Users',
     path: '/dashboard/users',
     icon: <HiUsers />,
