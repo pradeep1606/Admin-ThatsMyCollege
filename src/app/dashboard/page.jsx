@@ -1,10 +1,10 @@
 import React from 'react'
-import Card from './card/page'
+import Card from '../components/card/page'
 
 const page = () => {
   return (
     <div>
-        <Card />
+      <Card />
     </div>
   )
 }

@@ -14,7 +14,7 @@ const initialState = {
 export const fetchColleges = createAsyncThunk(
     'AllCollege/fetchColleges',
     async (page) => {
-        const response = await axiosInstance.get(`${Api}/courses/get-all/college-details?limit=20&page=${page}`, {
+        const response = await axiosInstance.get(`${Api}/college?limit=20&page=${page}`, {
             headers: {
               'Content-Type': 'application/json'
             },
@@ -29,7 +29,9 @@ export const collegeSlice = createSlice({
     name: 'AllCollege',
     initialState,
     reducers: {
-        // Reducers if needed
+        setStatus: (state, action) => {
+            state.status = action.payload;
+        },
     },
     extraReducers: (builder) => {
         builder
@@ -49,5 +51,5 @@ export const collegeSlice = createSlice({
 });
 
 // Export action creators and reducer
-export const { } = collegeSlice.actions;
+export const { setStatus } = collegeSlice.actions;
 export default collegeSlice.reducer;

@@ -5,7 +5,7 @@ import React, { useEffect, useState } from 'react'
 import Search from '../search/search'
 import Pagination from '../pagination/pagination'
 import { useSelector, useDispatch } from 'react-redux';
-import { fetchColleges } from '@/store/slices/collegeSlice'
+import { fetchColleges, setStatus } from '@/store/slices/collegeSlice'
 import GetAdmin from '@/app/components/getAdmin/page'
 
 const Colleges = () => {
@@ -13,14 +13,11 @@ const Colleges = () => {
   const dispatch = useDispatch();
   const [page, setPage] = useState(1);
 
-  const fetchCollegesData = (pageNumber) => {
-    dispatch(fetchColleges(pageNumber));
-  };
-
   useEffect(() => {
-    fetchCollegesData(page);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dispatch, page]);
+    if (status !== 'succeeded') {
+      dispatch(fetchColleges(page));
+    }
+  }, [page, status, dispatch]);
 
   if (status === 'failed') {
     return <div>Api Error: {error}</div>;
@@ -50,17 +47,17 @@ const Colleges = () => {
           <tbody><tr><td colSpan="6">Loading...</td></tr></tbody>
           :
           <tbody className='text-sm'>
-            {colleges?.courses?.map(college => (
-              <tr key={college.collegeId}>
+            {colleges?.colleges?.map(college => (
+              <tr key={college._id}>
                 <td className='p-2'>
                   <div className='flex gap-2 items-center'>
-                    <Image className='object-cover rounded-full w-auto' src={college?.college?.logo} alt='User' width={40} height={40} />
-                    {college?.college?.name}
+                    <Image className='object-cover rounded-full w-auto' src={college?.logo || ''} alt='User' width={40} height={40} />
+                    {college?.name}
                   </div>
                 </td>
-                <td className='p-2'>{college?.college?.city}</td>
+                <td className='p-2'>{college?.city}</td>
                 <td className='p-2'>{college.createdAt?.slice(0, 10)}</td>
-                <td className='p-2'>
+                {/* <td className='p-2'>
                   {college?.createdBy && college?.createdBy !== 'NA' ?
                     <GetAdmin id={college?.createdBy} /> :
                     <span>NA</span>
@@ -71,10 +68,10 @@ const Colleges = () => {
                     <GetAdmin id={college?.updatedBy || ''} /> :
                     <>NA</>
                   }
-                </td>
+                </td> */}
                 <td className='p-2'>
                   <div className='flex gap-2'>
-                    <Link href={`/dashboard/colleges/${college.collegeId}`}>
+                    <Link href={`/dashboard/colleges/${college._id}`}>
                       <button className='px-2 py-1 border-none rounded-md cursor-pointer bg-teal-600'>View</button>
                     </Link>
                     <button className='px-2 py-1 border-none rounded-md cursor-pointer bg-[#DC143C]'>Delete</button>
@@ -86,7 +83,7 @@ const Colleges = () => {
         }
 
       </table>
-      <Pagination page={page} setPage={setPage} totalDocuments={colleges?.totalDocuments} />
+      <Pagination page={page} setPage={setPage} totalDocuments={colleges?.totalDocuments} setStatus={setStatus} />
     </div>
   )
 }

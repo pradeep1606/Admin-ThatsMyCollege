@@ -20,20 +20,20 @@ const EditCollege = () => {
 
   // Set initial form values based on college data
   const initialForm = {
-    name: college?.data?.name || '',
-    address: college?.data?.address || '',
-    contact: college?.data?.contact || '',
-    city: college?.data?.city || '',
-    state: college?.data?.state || '',
-    collegeType: college?.data?.collegeType || '',
-    established: college?.data?.established || 0,
-    university: college?.data?.university || '',
-    logo: college?.data?.logo || '',
-    image: college?.data?.image || '',
-    message: college?.data?.message || '',
-    details: college?.data?.details || '',
-    rating: college?.data?.rating || 0,
-    featured: college?.data?.featured || false
+    name: college?.data?.college?.name || '',
+    address: college?.data?.college?.address || '',
+    contact: college?.data?.college?.contact || '',
+    city: college?.data?.college?.city || '',
+    state: college?.data?.college?.state || '',
+    collegeType: college?.data?.college?.collegeType || '',
+    established: college?.data?.college?.established || 0,
+    university: college?.data?.college?.university || '',
+    logo: college?.data?.college?.logo || '',
+    image: college?.data?.college?.image || '',
+    message: college?.data?.college?.message || '',
+    details: college?.data?.college?.details || '',
+    rating: college?.data?.college?.rating || 0,
+    featured: college?.data?.college?.featured || false
   };
 
   console.log(initialForm.name, initialForm.city);

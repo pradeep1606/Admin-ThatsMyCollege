@@ -7,7 +7,7 @@ import { RotatingLines } from 'react-loader-spinner';
 
 
 const Login = () => {
-  const Api = process.env.SERVICE_BASE_URL
+  const Api = process.env.SERVICE_BASE_URL;
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false)
@@ -28,7 +28,6 @@ const Login = () => {
         // console.log(response)
         setIsLoading(false)
         navigate(`/dashboard`)
-        toast.success('Login Sucessful')
       } else {
         setIsLoading(false)
         toast.error('Login Failed')
