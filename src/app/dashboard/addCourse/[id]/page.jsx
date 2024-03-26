@@ -1,10 +1,14 @@
 'use client'
 
 import Link from 'next/link';
-import CourseField from './CourseField';
+import CourseField from '../CourseField';
+import { usePathname } from 'next/navigation';
 
 const AddCourses = () => {
-
+    const pathname = usePathname();
+    const parts = pathname.split("/").pop().split("-");
+    const clgId = parts[0].trim();
+    const clgName = decodeURIComponent(parts.slice(1).join('-').trim());
     return (
         <div className='flex flex-col gap-6 mt-5'>
             {/* form container */}
@@ -13,7 +17,7 @@ const AddCourses = () => {
                     <span> Add Course Details</span>
                     <Link href='/dashboard/addCollege' className='text-xs bg-teal-600 rounded-md p-1'>+Add College</Link>
                 </div>
-                <CourseField />
+                <CourseField clgId={clgId} clgName={clgName} />
             </div>
         </div>
     );

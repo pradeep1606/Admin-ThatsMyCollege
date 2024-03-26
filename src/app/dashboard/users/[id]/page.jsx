@@ -10,15 +10,17 @@ import { usePathname } from 'next/navigation';
 
 const SingleUserPage = () => {
     const pathname = usePathname();
-    const userId = pathname.split('/').pop();
+    const path = pathname.split('/').pop().split('&');
+    const userId = path[1]
+    const headingName = decodeURIComponent(path[0])
     const dispatch = useDispatch();
     const { singleUser, status1, error1 } = useSelector(state => state.User);
 
     useEffect(() => {
-        if (status !== 'succeeded') {
+        if (status1 !== 'succeeded') {
             dispatch(fetchSingleUser(userId))
         }
-    }, [dispatch, userId])
+    }, [dispatch, userId, status1])
 
     if (status1 === 'loading') {
         return <div>Loading...</div>;
@@ -41,13 +43,13 @@ const SingleUserPage = () => {
 
             {/* User details */}
             <div className='flex-[3] bg-[#182237] p-4 rounded-lg space-y-4'>
-                <div className='text-lg font-semibold'>User Details</div>
+                <div className='text-lg font-semibold'>{headingName}</div>
                 <div className='flex justify-between'>
                     <div>
                         <div className='flex gap-3'>
                             <MdEmail className='text-2xl' />
                             Role :
-                            <span className='text-[#b7bac1]'>{role}</span>
+                            <span className='text-[#b7bac1]'>{Array.isArray(role) && role.length > 0 ? role.join(', ') : 'USER'}</span>
                         </div>
                         <div className='flex gap-3'>
                             <MdEmail className='text-2xl' />

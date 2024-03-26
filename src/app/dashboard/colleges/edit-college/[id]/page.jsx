@@ -36,7 +36,7 @@ const EditCollege = () => {
     featured: college?.data?.college?.featured || false
   };
 
-  console.log(initialForm.name, initialForm.city);
+  // console.log(initialForm.name, initialForm.city);
 
   return (
     <div className='flex flex-col gap-6 mt-5'>

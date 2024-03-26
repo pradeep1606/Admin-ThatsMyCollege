@@ -2,8 +2,10 @@ import axiosInstance from '@/config/AxiosIntercepter';
 import React, { useState } from 'react';
 import { toast } from 'react-toastify';
 import { RotatingLines } from 'react-loader-spinner';
+import { useRouter } from 'next/navigation';
 
 const FormComp = ({ initialForm, method, path }) => {
+    const router = useRouter()
     const [loading, setLoading] = useState(false)
     const Api = process.env.SERVICE_BASE_URL;
     const [formData, setFormData] = useState(initialForm);
@@ -55,6 +57,8 @@ const FormComp = ({ initialForm, method, path }) => {
             resetFormFields();
             setLoading(false);
             toast.success(response.data.message);
+            // console.log(response?.data?.data?._id)
+            router.push(`/dashboard/colleges/${response?.data?.data?._id}`)
         } catch (error) {
             setLoading(false)
             console.error('Error submitting college:', error);
@@ -77,7 +81,6 @@ const FormComp = ({ initialForm, method, path }) => {
                     required
                 />
             </div>
-
             {/* Address */}
             <div className='flex flex-col'>
                 <label className='text-sm' htmlFor="address">Address</label>
@@ -92,7 +95,6 @@ const FormComp = ({ initialForm, method, path }) => {
                     required
                 />
             </div>
-
             {/* Contact */}
             <div className='flex flex-col'>
                 <label className='text-sm' htmlFor="contact">Contact</label>
@@ -107,7 +109,6 @@ const FormComp = ({ initialForm, method, path }) => {
                 // required
                 />
             </div>
-
             {/* City */}
             <div className='flex flex-col'>
                 <label className='text-sm' htmlFor="city">City</label>
@@ -122,7 +123,6 @@ const FormComp = ({ initialForm, method, path }) => {
                     required
                 />
             </div>
-
             {/* State */}
             <div className='flex flex-col'>
                 <label className='text-sm' htmlFor="state">State</label>
@@ -137,7 +137,6 @@ const FormComp = ({ initialForm, method, path }) => {
                     required
                 />
             </div>
-
             {/* College Type */}
             <div className='flex flex-col'>
                 <label className='text-sm' htmlFor="collegeType">College Type (comma-separated)</label>
@@ -152,7 +151,6 @@ const FormComp = ({ initialForm, method, path }) => {
                     required
                 />
             </div>
-
             {/* Established */}
             <div className='flex flex-col'>
                 <label className='text-sm' htmlFor="established">Established</label>
@@ -167,7 +165,6 @@ const FormComp = ({ initialForm, method, path }) => {
                     required
                 />
             </div>
-
             {/* University */}
             <div className='flex flex-col'>
                 <label className='text-sm' htmlFor="university">University</label>
@@ -182,7 +179,6 @@ const FormComp = ({ initialForm, method, path }) => {
                     required
                 />
             </div>
-
             {/* Logo */}
             <div className='flex flex-col'>
                 <label className='text-sm' htmlFor="logo">Logo</label>
@@ -197,7 +193,6 @@ const FormComp = ({ initialForm, method, path }) => {
                     required
                 />
             </div>
-
             {/* Image */}
             <div className='flex flex-col'>
                 <label className='text-sm' htmlFor="image">Image</label>
@@ -211,7 +206,6 @@ const FormComp = ({ initialForm, method, path }) => {
                     required
                 />
             </div>
-
             {/* Message */}
             <div className='flex flex-col'>
                 <label className='text-sm' htmlFor="message">Message</label>
@@ -225,7 +219,6 @@ const FormComp = ({ initialForm, method, path }) => {
                     required
                 />
             </div>
-
             {/* Details */}
             <div className='flex flex-col'>
                 <label className='text-sm' htmlFor="details">Details</label>
@@ -239,7 +232,6 @@ const FormComp = ({ initialForm, method, path }) => {
                     required
                 />
             </div>
-
             {/* Rating */}
             <div className='flex flex-col'>
                 <label className='text-sm' htmlFor="rating">Rating</label>
@@ -254,7 +246,6 @@ const FormComp = ({ initialForm, method, path }) => {
                     required
                 />
             </div>
-
             {/* Featured */}
             <div className='flex flex-col'>
                 <label className='text-sm' htmlFor="featured">Featured</label>
@@ -270,7 +261,6 @@ const FormComp = ({ initialForm, method, path }) => {
                     <option value="true">True</option>
                 </select>
             </div>
-
             {/* Submit button */}
             <button className='col-span-2 w-full p-4 bg-teal-600 text-white rounded-lg border-none cursor-pointer' type="submit">
                 {loading ?

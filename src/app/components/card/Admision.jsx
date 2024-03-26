@@ -9,7 +9,7 @@ const Admision = () => {
         <span>Admision Details</span>
         <span className='text-sm font-light'>0</span>
         <span className='font-light text-sm'>
-          <span className='text-lime-600'>12% </span> more than previous week
+          <span className='text-lime-600'> </span> Admission done
         </span>
       </div>
     </div>

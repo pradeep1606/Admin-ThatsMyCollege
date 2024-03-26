@@ -23,9 +23,7 @@ const Login = () => {
         },
       });
       localStorage.setItem('authToken', response.data.user.authToken)
-      console.log(response.data.user)
       if (response.status === 200) {
-        // console.log(response)
         setIsLoading(false)
         navigate(`/dashboard`)
       } else {
@@ -40,9 +38,7 @@ const Login = () => {
     }
   };
 
-  // Check if email and password are not empty
   const isDisabled = !(email && password);
-
   return (
     <div className='w-full h-screen flex justify-center items-center'>
       <form className='bg-[#182237] p-10 rounded-lg w-96 flex flex-col gap-7' onSubmit={handleSubmit}>
@@ -63,7 +59,7 @@ const Login = () => {
         />
         <button
           className={`p-4 bg-teal-600 text-white border-none cursor-pointer rounded ${isDisabled ? 'opacity-50 cursor-not-allowed' : ''}`}
-          disabled={isDisabled} // Disable the button if email or password is empty
+          disabled={isDisabled}
         >
           {isLoading ? (
             <div className='flex justify-center items-center'>
