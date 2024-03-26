@@ -1,25 +1,23 @@
 'use client'
 import React, { useState, useEffect } from 'react';
-import axiosInstance from '@/config/AxiosIntercepter';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchAllusers } from '@/store/slices/userSlice';
 
 const GetAdmin = ({ id }) => {
-    const Api = process.env.SERVICE_BASE_URL;
-    const [adminName, setAdminName] = useState(null);
+    const dispatch = useDispatch();
+    const { users, status } = useSelector((state) => state.User);
+    const [adminName, setAdminName] = useState('');
+
     useEffect(() => {
-        const fetchAdmin = async () => {
-            try {
-                const response = await axiosInstance.get(`${Api}/users/${id}`, {
-                    headers: {
-                        'Content-Type': 'application/json'
-                    }
-                });
-                setAdminName(response.data.data.firstName + ' ' + response.data?.data?.lastName);
-            } catch (error) {
-                // console.error('Error fetching admin:', error);
+        if (status !== 'succeeded') {
+            dispatch(fetchAllusers());
+        } else {
+            const getUser = users.find(user => user._id === id);
+            if (getUser) {
+                setAdminName(`${getUser.firstName} ${getUser.lastName}`);
             }
-        };
-        fetchAdmin();
-    }, [id, Api]);
+        }
+    }, [dispatch, id, status, users]);
 
     return (
         <>

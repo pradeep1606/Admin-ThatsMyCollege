@@ -5,7 +5,8 @@ import { HiUsers } from "react-icons/hi";
 import { RiSchoolFill } from "react-icons/ri";
 import Image from 'next/image';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
+import { toast } from 'react-toastify';
 
 const menuItems = [
   {
@@ -32,6 +33,13 @@ const menuItems = [
 
 const Sidebar = () => {
   const pathname = usePathname();
+  const router = useRouter();
+
+  const handleLogoOut=()=>{
+    localStorage.removeItem('authToken');
+    router.push('/login')
+    toast.success('Logout successful')
+  }
   return (
     <div className='sticky top-10'>
       <div className='relative flex justify-center items-center'>
@@ -47,7 +55,7 @@ const Sidebar = () => {
         )
         }
       </ul>
-      <button className='flex items-center pt-1 p-5 gap-2 cursor-pointer rounded-lg w-full border-none bg-none hover:bg-[#2e374a]'><MdLogout />Logout</button>
+      <button onClick={handleLogoOut} className='flex items-center pt-1 p-5 gap-2 cursor-pointer rounded-lg w-full border-none bg-none hover:bg-[#2e374a]'><MdLogout />Logout</button>
     </div>
   )
 }

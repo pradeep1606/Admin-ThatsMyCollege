@@ -6,8 +6,11 @@ const Api = process.env.SERVICE_BASE_URL;
 // Define the initial state
 const initialState = {
     colleges: [],
+    page: 1,
     status: 'idle', // for tracking loading status
-    error: null // for tracking errors
+    error: null, // for tracking errors
+    deleteStatus: 'idle', // for tracking delete operation status
+    deleteError: null // for tracking delete operation errors
 };
 
 // Define an async thunk to fetch colleges data from the API
@@ -24,6 +27,20 @@ export const fetchColleges = createAsyncThunk(
     }
 );
 
+// Define an async thunk to delete a college from the API
+export const deleteCollege = createAsyncThunk(
+    'AllCollege/deleteCollege',
+    async (collegeId) => {
+        const response = await axiosInstance.delete(`${Api}/college/${collegeId}`, {
+            headers: {
+              'Content-Type': 'application/json'
+            },
+          });
+        const data = await response.data;
+        return data;
+    }
+);
+
 // Create a slice
 export const collegeSlice = createSlice({
     name: 'AllCollege',
@@ -32,6 +49,9 @@ export const collegeSlice = createSlice({
         setStatus: (state, action) => {
             state.status = action.payload;
         },
+        setPage:(state, action)=>{
+            state.page = action.payload;
+        }
     },
     extraReducers: (builder) => {
         builder
@@ -46,10 +66,22 @@ export const collegeSlice = createSlice({
             .addCase(fetchColleges.rejected, (state, action) => {
                 state.status = 'failed';
                 state.error = action.error.message;
+            })
+            // Add reducers for the deleteCollege async thunk
+            .addCase(deleteCollege.pending, (state) => {
+                state.deleteStatus = 'loading';
+            })
+            .addCase(deleteCollege.fulfilled, (state) => {
+                state.deleteStatus = 'succeeded';
+                // You may want to update the state accordingly after deleting the college
+            })
+            .addCase(deleteCollege.rejected, (state, action) => {
+                state.deleteStatus = 'failed';
+                state.deleteError = action.error.message;
             });
     },
 });
 
 // Export action creators and reducer
-export const { setStatus } = collegeSlice.actions;
+export const { setStatus, setPage } = collegeSlice.actions;
 export default collegeSlice.reducer;

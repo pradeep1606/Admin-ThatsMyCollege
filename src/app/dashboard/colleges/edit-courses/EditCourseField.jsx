@@ -3,62 +3,79 @@ import { useDispatch, useSelector } from 'react-redux';
 import axiosInstance from '@/config/AxiosIntercepter';
 import { toast } from 'react-toastify';
 import { fetchCourse } from '@/store/slices/courseSlice';
+import { navigateToCollege } from '@/app/action';
+import { RotatingLines } from 'react-loader-spinner';
+import { useRouter } from 'next/navigation';
 
 const EditCourseField = ({ clgId, clgName }) => {
+    const router = useRouter()
     const Api = process.env.SERVICE_BASE_URL;
     const dispatch = useDispatch();
-    const { courses, status, error } = useSelector((state) => state.Course);
-    const [courseFields, setCourseFields] = useState([{ id: 1, label: "Course 1" }]); // Initial CourseField
-    console.log(courses)
+    const { courses } = useSelector((state) => state.Course);
+    const [courseFields, setCourseFields] = useState([]);
+    const [isLoading, setIsLoading] = useState(false)
 
     useEffect(() => {
         dispatch(fetchCourse(`/courses/college/${clgId}`));
     }, [dispatch, clgId]);
 
+    useEffect(() => {
+        if (courses?.data?.courses) {
+            const loadedCourses = courses.data.courses.map((course, index) => ({
+                id: index + 1, 
+                ...course, 
+            }));
+            setCourseFields(loadedCourses);
+        }
+    }, [courses]);
+
     const handleAddMore = () => {
-        const lastCourseId = courseFields[courseFields?.length - 1]?.id || 0;
+        const lastCourseId = courseFields[courseFields?.length - 1]?.id;
         const newId = lastCourseId + 1;
         setCourseFields(prevFields => [...prevFields, { id: newId, label: `Course ${newId}` }]);
     };
+
     const handleDeleteCourse = (id) => {
-        setCourseFields(prevFields => {
-            const filteredFields = prevFields.filter(field => field.id !== id);
-            return filteredFields;
-        });
+        setCourseFields(courseFields.filter(field => field.id !== id));
     };
 
-    // handle form submit
+    const handleChange = (id, event) => {
+        const { name, value } = event.target;
+        setCourseFields(courseFields.map(field => field.id === id ? { ...field, [name]: value } : field));
+    };
+
     const handleSubmit = async (event) => {
         event.preventDefault();
+        setIsLoading(true)
         const payload = {
             collegeId: clgId,
-            courses: courseFields.map(field => ({
-                courseName: event.target.elements[`courseName-${field.id}`]?.value,
-                fullName: event.target.elements[`fullName-${field.id}`]?.value,
-                fee: event.target.elements[`fee-${field.id}`]?.value,
-                branches: event.target.elements[`branches-${field.id}`]?.value.split(','), // Assuming branches are comma-separated values
-                eligibility: event.target.elements[`eligibility-${field.id}`]?.value,
-                duration: event.target.elements[`duration-${field.id}`]?.value,
-            }))
+            courses: courseFields.map(({ id, label, branches, ...rest }) => {
+                const processedBranches = typeof branches === 'string' ? branches.split(',').map(branch => branch.trim()) : branches;
+                return {
+                    ...rest,
+                    branches: processedBranches,
+                };
+            })
         };
         try {
-            const response = await axiosInstance.post(`${Api}/courses`, payload, {
+            const response = await axiosInstance.patch(`${Api}/courses/college/${clgId}`, payload, {
                 headers: {
                     'Content-Type': 'application/json',
                 },
             });
-            // console.log(response);
-            toast.success(response.data.message)
-            setCourseFields([]);
+            toast.success(response.data.message);
+            setIsLoading(false)
+            router.push(`/dashboard/colleges/${clgId}`)
         } catch (error) {
-            // console.error('Error submitting course:', error);
-            toast.success(error)
-            toast.error(error.response?.data.message)
+            toast.success(error);
+            setIsLoading(false)
+            toast.error(error);
         }
     };
+
     return (
         <>
-            <form className='flex flex-col gap-x-4 gap-y-4' onSubmit={handleSubmit}>
+            <form onSubmit={handleSubmit} className="flex flex-col gap-x-4 gap-y-4">
                 <div className='col-span-2'>
                     <label className='text-sm' htmlFor="collegeType">Search and select a college</label>
                     <div className="relative w-full">
@@ -70,100 +87,123 @@ const EditCourseField = ({ clgId, clgName }) => {
                             placeholder="Search for a college"
                             value={clgName}
                             required
+                            readOnly
                         />
                     </div>
                 </div>
-
-                {/* course fields */}
+                {/* Repeated fields for each course */}
                 {courseFields.map((field, index) => (
-                    <div key={field.id} className='grid grid-cols-2 gap-x-4 gap-y-1 pt-3'>
-                        <div className='col-span-2 flex justify-between'>
-                            <span className=''>Course {field.id}</span>
-                            <button className='py-1 px-2 bg-red-500 text-white rounded-md' onClick={() => handleDeleteCourse(field.id)}>Delete </button>
+                    <div key={field.id} className="grid grid-cols-2 gap-x-4 gap-y-1 pt-3">
+                        <div className="col-span-2 flex justify-between">
+                            <span>Course {field.id}</span>
+                            <button
+                                type="button"
+                                className="py-1 px-2 bg-red-500 text-white rounded-md"
+                                onClick={() => handleDeleteCourse(field.id)}
+                            >
+                                Delete
+                            </button>
                         </div>
-                        {/* <CourseField /> */}
-                        {/* course field start */}
-                        <div className='flex flex-col'>
-                            <label className='text-sm' htmlFor={`courseName-${field.id}`}>Course Name</label>
+                        {/* Dynamically generated input fields for each course attribute */}
+                        <div className='flex flex-col text-sm'>
+                            <label className="text-white" htmlFor={`courseName-${field.id}`}>Course Name</label>
                             <input
-                                className='p-2 border-2 border-solid rounded text-sm border-[#2e374a] bg-[#151c2c] text-white col-span-2'
+                                className="p-2 border-2 border-solid rounded border-[#2e374a] bg-[#151c2c] text-white"
                                 type="text"
+                                name="courseName"
                                 id={`courseName-${field.id}`}
-                                name={`courseName-${field.id}`}
                                 placeholder="Course Name"
+                                value={field.courseName}
+                                onChange={(e) => handleChange(field.id, e)}
                                 required
                             />
                         </div>
-                        <div className='flex flex-col'>
-                            <label className='text-sm' htmlFor={`fullName-${field.id}`}>Full Name</label>
+                        <div className='flex flex-col text-sm'>
+                            <label className="col-span-2 text-white" htmlFor={`fullName-${field.id}`}>Full Name</label>
                             <input
-                                className='p-2 border-2 border-solid rounded text-sm border-[#2e374a] bg-[#151c2c] text-white col-span-2'
+                                className="p-2 border-2 border-solid rounded text-sm border-[#2e374a] bg-[#151c2c] text-white"
                                 type="text"
+                                name="fullName"
                                 id={`fullName-${field.id}`}
-                                name={`fullName-${field.id}`}
                                 placeholder="Full Name"
+                                value={field.fullName}
+                                onChange={(e) => handleChange(field.id, e)}
                                 required
                             />
                         </div>
-                        <div className='flex flex-col'>
-                            <label className='text-sm' htmlFor={`fee-${field.id}`}>Fee</label>
+                        <div className='flex flex-col text-sm'>
+                            <label className="text-white" htmlFor={`fee-${field.id}`}>Fee</label>
                             <input
-                                className='p-2 border-2 border-solid rounded text-sm border-[#2e374a] bg-[#151c2c] text-white'
+                                className="p-2 border-2 border-solid rounded text-sm border-[#2e374a] bg-[#151c2c] text-white"
                                 type="text"
+                                name="fee"
                                 id={`fee-${field.id}`}
-                                name={`fee-${field.id}`}
                                 placeholder="Fee"
+                                value={field.fee}
+                                onChange={(e) => handleChange(field.id, e)}
                                 required
                             />
                         </div>
-                        <div className='flex flex-col'>
-                            <label className='text-sm' htmlFor={`branches-${field.id}`}>Branches</label>
+                        <div className='flex flex-col text-sm'>
+                            <label className="text-white" htmlFor={`branches-${field.id}`}>Branches</label>
                             <input
-                                className='p-2 border-2 border-solid rounded text-sm border-[#2e374a] bg-[#151c2c] text-white'
+                                className="p-2 border-2 border-solid rounded text-sm border-[#2e374a] bg-[#151c2c] text-white"
                                 type="text"
+                                name="branches"
                                 id={`branches-${field.id}`}
-                                name={`branches-${field.id}`}
                                 placeholder="Branches"
+                                value={field.branches}
+                                onChange={(e) => handleChange(field.id, e)}
                                 required
                             />
                         </div>
-                        <div className='flex flex-col'>
-                            <label className='text-sm' htmlFor={`eligibility-${field.id}`}>Eligibility</label>
+                        <div className='flex flex-col text-sm'>
+                            <label className="text-white" htmlFor={`eligibility-${field.id}`}>Eligibility</label>
                             <input
-                                className='p-2 border-2 border-solid rounded text-sm border-[#2e374a] bg-[#151c2c] text-white'
+                                className="p-2 border-2 border-solid rounded text-sm border-[#2e374a] bg-[#151c2c] text-white"
                                 type="text"
+                                name="eligibility"
                                 id={`eligibility-${field.id}`}
-                                name={`eligibility-${field.id}`}
                                 placeholder="Eligibility"
+                                value={field.eligibility}
+                                onChange={(e) => handleChange(field.id, e)}
                                 required
                             />
                         </div>
-                        <div className='flex flex-col'>
-                            <label className='text-sm' htmlFor={`duration-${field.id}`}>Duration</label>
+                        <div className='flex flex-col text-sm'>
+                            <label className="text-white" htmlFor={`duration-${field.id}`}>Duration</label>
                             <input
-                                className='p-2 border-2 border-solid rounded text-sm border-[#2e374a] bg-[#151c2c] text-white'
+                                className="p-2 border-2 border-solid rounded text-sm border-[#2e374a] bg-[#151c2c] text-white"
                                 type="text"
+                                name="duration"
                                 id={`duration-${field.id}`}
-                                name={`duration-${field.id}`}
                                 placeholder="Duration"
+                                value={field.duration}
+                                onChange={(e) => handleChange(field.id, e)}
                                 required
                             />
                         </div>
-                        {/* course field end */}
-                        <div className='bg-white h-[1px] col-span-2 mt-2'></div>
                     </div>
                 ))}
-                {/* add more course button */}
-                <div className='flex justify-end col-span-2'>
-                    <button type='button' className='bg-blue-500 px-3 py-1 rounded-md' onClick={handleAddMore}>
+                <div className="flex justify-end col-span-2">
+                    <button type="button" className="bg-blue-500 px-3 py-1 rounded-md" onClick={handleAddMore}>
                         + Add More
                     </button>
                 </div>
-
-                <button className='col-span-2 w-full p-4 bg-teal-600 text-white rounded-lg border-none cursor-pointer' type="submit">Submit</button>
+                <button
+                    className="col-span-2 w-full p-4 bg-teal-600 text-white rounded-lg border-none cursor-pointer"
+                >
+                    {isLoading ?
+                        <div className='flex justify-center items-center'>
+                            <RotatingLines strokeColor="white" strokeWidth="4" animationDuration="0.75" width="25" visible={true} />
+                        </div>
+                        :
+                        'Submit'
+                    }
+                </button>
             </form>
         </>
-    )
-}
+    );
+};
 
-export default EditCourseField
+export default EditCourseField;

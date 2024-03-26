@@ -4,35 +4,15 @@ import { fetchSearchCollege } from '@/store/slices/searchCollege';
 // import { nanoid } from '@reduxjs/toolkit';
 import axiosInstance from '@/config/AxiosIntercepter';
 import { toast } from 'react-toastify';
+import { useRouter } from 'next/navigation';
+import { RotatingLines } from 'react-loader-spinner';
 
-const CourseField = () => {
+const CourseField = ({ clgId, clgName }) => {
+    const router = useRouter();
     const Api = process.env.SERVICE_BASE_URL;
-    const dispatch = useDispatch();
     // const uniqueid = nanoid();
-    const { colleges, loading, error } = useSelector((state) => state.searchCollege);
-    const [searchTerm, setSearchTerm] = useState('');
-    const [collegeId, setCollegeId] = useState('');
-    const [selectedCollege, setSelectedCollege] = useState(''); // State to store selected college
-    const [showDropdown, setShowDropdown] = useState(false); // State to manage dropdown visibility
-    const [courseFields, setCourseFields] = useState([{ id: 1, label: "Course 1" }]); // Initial CourseField
-
-    const handleInputChange = (event) => {
-        setSearchTerm(event.target.value);
-        setShowDropdown(true);
-    };
-
-    const handleSelectCollege = (collegeName, collegeId) => {
-        setSelectedCollege(collegeId);
-        setCollegeId(collegeId);
-        setSearchTerm(collegeName);
-        setShowDropdown(false);
-    };
-
-    useEffect(() => {
-        if (searchTerm.length >= 3) {
-            dispatch(fetchSearchCollege(`/college?collegeName=${searchTerm}`));
-        }
-    }, [dispatch, searchTerm]);
+    const [courseFields, setCourseFields] = useState([{ id: 1, label: "Course 1" }]);
+    const [isLoading, setIsLoading] = useState(false)
 
     const handleAddMore = () => {
         const lastCourseId = courseFields[courseFields?.length - 1]?.id || 0;
@@ -49,8 +29,9 @@ const CourseField = () => {
     // handle form submit
     const handleSubmit = async (event) => {
         event.preventDefault();
+        setIsLoading(true)
         const payload = {
-            collegeId: collegeId,
+            collegeId: clgId,
             courses: courseFields.map(field => ({
                 courseName: event.target.elements[`courseName-${field.id}`]?.value,
                 fullName: event.target.elements[`fullName-${field.id}`]?.value,
@@ -66,13 +47,13 @@ const CourseField = () => {
                     'Content-Type': 'application/json',
                 },
             });
-            // console.log(response);
             toast.success(response.data.message)
-            setSearchTerm('');
-            setCourseFields([]);
+            setIsLoading(false)
+            router.push(`/dashboard/colleges/${clgId}`)
         } catch (error) {
+            setIsLoading(false)
             // console.error('Error submitting course:', error);
-            toast.error(error.response.data.message)
+            toast.error(error)
         }
     };
     return (
@@ -87,32 +68,10 @@ const CourseField = () => {
                             id="collegeType"
                             name="collegeType"
                             placeholder="Search for a college"
-                            value={searchTerm}
-                            onChange={handleInputChange}
+                            value={clgName}
                             required
+                            readOnly
                         />
-                        {/* Render search results as dropdown */}
-                        {showDropdown && (
-                            <div className="absolute top-full bg-[#182237] px-2 border rounded w-full shadow-md">
-                                {loading ? (
-                                    <div>Loading...</div>
-                                ) : error ? (
-                                    <div>Error: {error.message}</div>
-                                ) : colleges?.data?.colleges.length === 0 ? (
-                                    <div>No colleges found</div>
-                                ) : (
-                                    <ul className='divide-y py-2 px-2 space-y-2'>
-                                        {colleges?.data?.colleges.map((college) => (
-                                            <li key={college._id} onClick={() => handleSelectCollege(college.name, college._id)} className='cursor-pointer'>
-                                                <p>
-                                                    {college.name}
-                                                </p>
-                                            </li>
-                                        ))}
-                                    </ul>
-                                )}
-                            </div>
-                        )}
                     </div>
                 </div>
 
@@ -202,7 +161,15 @@ const CourseField = () => {
                     </button>
                 </div>
 
-                <button className='col-span-2 w-full p-4 bg-teal-600 text-white rounded-lg border-none cursor-pointer' type="submit">Submit</button>
+                <button className='col-span-2 w-full p-4 bg-teal-600 text-white rounded-lg border-none cursor-pointer' type="submit">
+                {isLoading ?
+                        <div className='flex justify-center items-center'>
+                            <RotatingLines strokeColor="white" strokeWidth="4" animationDuration="0.75" width="25" visible={true} />
+                        </div>
+                        :
+                        'Submit'
+                    }
+                </button>
             </form>
         </>
     )

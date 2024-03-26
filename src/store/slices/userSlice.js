@@ -73,7 +73,7 @@ export const userSlice = createSlice({
             .addCase(fetchSingleUser.rejected, (state, action) => {
                 state.status1 = 'failed';
                 state.error1 = action.error.message;
-            });
+            })
     },
 });
 

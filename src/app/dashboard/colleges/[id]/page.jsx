@@ -31,7 +31,6 @@ const SingleCollegePage = () => {
     }
     const { _id, name, address, city, collegeType, contact, createdAt, createdBy, details, message, established, featured = false, image, isDeleted, logo, rating, state, university, updatedAt, updatedBy } = college?.data?.college || {};
     const courses = college?.data?.courses
-    console.log(courses?.courses.length)
     return (
         <div className='flex mt-4 pt-4 bg-[#182237] rounded-md'>
             {/* logo & name */}
@@ -159,7 +158,7 @@ const SingleCollegePage = () => {
                             <Link href={`/dashboard/colleges/edit-courses/${_id}-${name}`}>
                                 <button className='px-3 py-1 border-none rounded-md cursor-pointer bg-teal-600'>Edit Courses</button>
                             </Link> :
-                            <Link href='/dashboard/colleges/addCourse'>
+                            <Link href={`/dashboard/addCourse/${_id}-${name}`}>
                                 <button className='px-3 py-1 border-none rounded-md cursor-pointer bg-teal-600'>Add Courses</button>
                             </Link>
                         }
