@@ -17,10 +17,8 @@ const SingleUserPage = () => {
     const { singleUser, status1, error1 } = useSelector(state => state.User);
 
     useEffect(() => {
-        if (status1 !== 'succeeded') {
             dispatch(fetchSingleUser(userId))
-        }
-    }, [dispatch, userId, status1])
+    }, [dispatch, userId])
 
     if (status1 === 'loading') {
         return <div>Loading...</div>;
@@ -47,7 +45,7 @@ const SingleUserPage = () => {
                 <div className='flex justify-between'>
                     <div>
                         <div className='flex gap-3'>
-                            <MdEmail className='text-2xl' />
+                            <FaUser className='text-2xl' />
                             Role :
                             <span className='text-[#b7bac1]'>{Array.isArray(role) && role.length > 0 ? role.join(', ') : 'USER'}</span>
                         </div>
@@ -88,7 +86,7 @@ const SingleUserPage = () => {
                         </div>
                     </div>
                     <div className='px-4'>
-                        <Link href='/dashboard/users/edit-user'>
+                        <Link href={`/dashboard/users/edit-user/${_id}`}>
                             <button className='px-3 py-1 border-none rounded-md cursor-pointer bg-teal-600'>Edit</button>
                         </Link>
                     </div>

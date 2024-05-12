@@ -3,14 +3,12 @@ import axiosInstance from '@/config/AxiosIntercepter';
 
 const Api = process.env.SERVICE_BASE_URL;
 
-// Define the initial state
 const initialState = {
     college: [],
-    status: 'idle', // for tracking loading status
-    error: null // for tracking errors
+    status: 'idle',
+    error: null 
 };
 
-// Define async thunk to fetch college data from the API
 export const fetchSingleColleges = createAsyncThunk(
     'SingleCollege/fetchSingleColleges',
     async (collegeId) => {

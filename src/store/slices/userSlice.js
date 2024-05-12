@@ -9,8 +9,8 @@ const initialState = {
     singleUser: [],
     status: 'idle', // for tracking loading status
     error: null, // for tracking errors
-    status1: 'idle', // for tracking loading status
-    error1: null // for tracking errors
+    status1: 'idle', // for tracking single user status
+    error1: null // for tracking single user errors
 };
 
 // Define async thunk to fetch users data from the API
@@ -31,6 +31,7 @@ export const fetchAllusers = createAsyncThunk(
 export const fetchSingleUser = createAsyncThunk(
     'SingleUser/fetchSingleUser',
     async (userId) => {
+        // console.log(userId)
         const response = await axiosInstance.get(`${Api}/users/${userId}`, {
             headers: {
               'Content-Type': 'application/json'
