@@ -22,7 +22,7 @@ const ProtectedRoute = ({ children }) => {
     }
 
     if (status === 'failed' || !isAuthenticated) {
-        navigateToLogin('/login');
+        // console.log(error)
         return <div>
             {`Login failed. `} Please 
             <Link href='/login' className='text-teal-400'> login</Link> again..

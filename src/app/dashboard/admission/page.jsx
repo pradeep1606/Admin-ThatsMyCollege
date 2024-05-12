@@ -1,4 +1,5 @@
 'use client'
+
 import Image from 'next/image'
 import React, { useState } from 'react'
 
@@ -16,6 +17,7 @@ const EditUser = () => {
     }
   };
   return (
+    
     <div className='flex gap-6 mt-5'>
       {/* info container */}
       <div className='flex-1 w-[5vw] bg-[#182237] p-4 rounded-lg font-bold text-[#b7bac1] h-max'>
