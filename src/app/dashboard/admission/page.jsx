@@ -1,11 +1,10 @@
-import React from 'react'
+'use client'
 import CollegeSearch from '../../components/collegeSearch/page'
 
 const Admission = () => {
   return (
     <div>
       admission details
-      <CollegeSearch />
     </div>
   )
 }

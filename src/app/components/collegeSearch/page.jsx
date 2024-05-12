@@ -2,7 +2,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { MdSearch } from 'react-icons/md';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchAllColleges, fetchColleges } from '@/store/slices/collegeSlice';
+import { fetchAllColleges } from '@/store/slices/collegeSlice';
 import Link from 'next/link';
 
 const CollegeSearch = () => {
@@ -42,7 +42,7 @@ const CollegeSearch = () => {
         }, 1000);
     };
 
-    if (status === 'loading') {
+    if (allCollegesStatus === 'loading') {
         return <div>loading....</div>
     }
 
