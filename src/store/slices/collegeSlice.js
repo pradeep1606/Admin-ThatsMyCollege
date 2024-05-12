@@ -7,10 +7,13 @@ const Api = process.env.SERVICE_BASE_URL;
 const initialState = {
     colleges: [],
     page: 1,
-    status: 'idle', // for tracking loading status
-    error: null, // for tracking errors
-    deleteStatus: 'idle', // for tracking delete operation status
-    deleteError: null // for tracking delete operation errors
+    status: 'idle', 
+    error: null, 
+    deleteStatus: 'idle', 
+    deleteError: null,
+    allColleges: [],
+    allCollegesStatus: 'idle',
+    allCollegesError: null
 };
 
 // Define an async thunk to fetch colleges data from the API
@@ -18,6 +21,20 @@ export const fetchColleges = createAsyncThunk(
     'AllCollege/fetchColleges',
     async (page) => {
         const response = await axiosInstance.get(`${Api}/college?limit=20&page=${page}`, {
+            headers: {
+              'Content-Type': 'application/json'
+            },
+          });
+        const data = await response.data.data;
+        return data;
+    }
+);
+
+// Define an async thunk to fetch colleges data from the API
+export const fetchAllColleges = createAsyncThunk(
+    'AllCollege/fetchAllColleges',
+    async () => {
+        const response = await axiosInstance.get(`${Api}/college?limit=1000`, {
             headers: {
               'Content-Type': 'application/json'
             },
@@ -66,6 +83,18 @@ export const collegeSlice = createSlice({
             .addCase(fetchColleges.rejected, (state, action) => {
                 state.status = 'failed';
                 state.error = action.error.message;
+            })
+            // Add reducers for the fetchAllColleges async thunk
+            .addCase(fetchAllColleges.pending, (state) => {
+                state.allCollegesStatus = 'loading';
+            })
+            .addCase(fetchAllColleges.fulfilled, (state, action) => {
+                state.status = 'succeeded';
+                state.allColleges = action.payload;
+            })
+            .addCase(fetchAllColleges.rejected, (state, action) => {
+                state.status = 'failed';
+                state.allCollegesError = action.error.message;
             })
             // Add reducers for the deleteCollege async thunk
             .addCase(deleteCollege.pending, (state) => {

@@ -1,5 +1,4 @@
 'use client'
-import Link from 'next/link'
 import React from 'react'
 import FormComp from '../../../addCollege/formComp'
 import { useSelector } from 'react-redux'
@@ -18,7 +17,6 @@ const EditCollege = () => {
     return <div>Api Error: {error}</div>;
   }
 
-  // Set initial form values based on college data
   const initialForm = {
     name: college?.data?.college?.name || '',
     address: college?.data?.college?.address || '',
@@ -36,7 +34,6 @@ const EditCollege = () => {
     featured: college?.data?.college?.featured || false
   };
 
-  // console.log(initialForm.name, initialForm.city);
 
   return (
     <div className='flex flex-col gap-6 mt-5'>

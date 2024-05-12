@@ -18,7 +18,7 @@ const UserCard = () => {
         <span>Website User</span>
         <span className='text-sm font-light'>{users.length}</span>
         <span className='font-light text-sm'>
-          <span className='text-lime-600'></span>All logged in user
+          <span className='text-lime-600'></span>All website user
         </span>
       </div>
     </div>

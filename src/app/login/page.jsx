@@ -23,14 +23,8 @@ const Login = () => {
         },
       });
       localStorage.setItem('authToken', response.data.user.authToken)
-      if (response.status === 200) {
-        setIsLoading(false)
-        navigate(`/dashboard`)
-      } else {
-        setIsLoading(false)
-        toast.error('Login Failed')
-        console.error('Login failed');
-      }
+      setIsLoading(false)
+      navigate(`/dashboard`)
     } catch (error) {
       setIsLoading(false)
       toast.error('Login Failed')

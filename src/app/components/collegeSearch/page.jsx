@@ -2,12 +2,12 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { MdSearch } from 'react-icons/md';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchColleges } from '@/store/slices/collegeSlice';
+import { fetchAllColleges, fetchColleges } from '@/store/slices/collegeSlice';
 import Link from 'next/link';
 
 const CollegeSearch = () => {
     const dispatch = useDispatch();
-    const { colleges, page, status } = useSelector((state) => state.AllCollege);
+    const { allColleges, allCollegesStatus } = useSelector((state) => state.AllCollege);
     const [searchInput, setSearchInput] = useState('');
     const [filteredColleges, setFilteredColleges] = useState([]);
     const [queryLimit, setQueryLimit] = useState('');
@@ -16,19 +16,19 @@ const CollegeSearch = () => {
     const searchTimer = useRef(null);
 
     useEffect(() => {
-        if (status !== 'succeeded') {
-            dispatch(fetchColleges(page));
+        if (allCollegesStatus !== 'succeeded') {
+            dispatch(fetchAllColleges());
           }
-    }, [dispatch, page, status]);
+    }, [dispatch, allCollegesStatus]);
 
     useEffect(() => {
-        if (colleges && colleges.colleges) {
-            const filtered = colleges.colleges.filter(college =>
+        if (allColleges && allColleges.colleges) {
+            const filtered = allColleges.colleges.filter(college =>
                 college.name.toLowerCase().includes(searchInput.toLowerCase())
             );
             setFilteredColleges(filtered);
         }
-    }, [colleges, searchInput]);
+    }, [allColleges, searchInput]);
 
     const handleSearchInputChange = (e) => {
         const query = e.target.value;

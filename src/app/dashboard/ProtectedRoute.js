@@ -18,11 +18,11 @@ const ProtectedRoute = ({ children }) => {
     }, [dispatch]);
 
     if (status === 'loading') {
-        return <div>Loading...</div>; // Or some loading spinner
+        return <div>Loading...</div>;
     }
 
     if (status === 'failed' || !isAuthenticated) {
-        // console.log(error)
+        navigateToLogin('/login');
         return <div>
             {`Login failed. `} Please 
             <Link href='/login' className='text-teal-400'> login</Link> again..
